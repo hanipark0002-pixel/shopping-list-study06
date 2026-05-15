@@ -298,13 +298,16 @@
     if (!text) return;
 
     btnAdd.disabled = true;
-    const newItem = { id: Date.now(), text, done: false };
+    const { data, error } = await db
+      .from('shopping_items')
+      .insert({ text, done: false })
+      .select()
+      .single();
 
-    const { error } = await db.from('shopping_items').insert(newItem);
     if (error) {
       setStatus('추가 실패: ' + error.message, true);
     } else {
-      items.unshift(newItem);
+      items.unshift(data);
       inputEl.value = '';
       setStatus('');
       render();
